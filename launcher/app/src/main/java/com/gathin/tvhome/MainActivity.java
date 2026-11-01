@@ -160,8 +160,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             int h = b - t;
             int dockRow = (int) ((101 + 6 + 12) * density);   // item height plus DockDecoration offsets
             int want = Math.max(0, h - dockRow + (int) (8 * density));
-            if (grid.getPaddingTop() != want) {
-                grid.setPadding(grid.getPaddingLeft(), want, grid.getPaddingRight(), grid.getPaddingBottom());
+            // Each column is 108dp wide, so the grid is as wide as its columns and stays centred.
+            int side = Math.max(0, (int) (((r - l) - COLUMNS * 108 * density) / 2));
+            if (grid.getPaddingTop() != want || grid.getPaddingLeft() != side) {
+                grid.setPadding(side, want, side, grid.getPaddingBottom());
             }
         });
 
@@ -187,7 +189,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         View btnSettings = findViewById(R.id.btnSettings);
         btnInputs.setOnClickListener(v -> showInputs());
         btnWifi.setOnClickListener(v -> open(new Intent(Settings.ACTION_WIFI_SETTINGS)));
-        btnSettings.setOnClickListener(v -> open(new Intent(Settings.ACTION_SETTINGS)));
+        btnSettings.setOnClickListener(v -> openSettings());
         btnSettings.setOnLongClickListener(v -> {
             showHomeScreenMenu(v);
             return true;
@@ -640,6 +642,19 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             startActivity(i);
         } catch (ActivityNotFoundException e) {
             Toast.makeText(this, "Not available on this TV", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Fire OS 7 answers ACTION_SETTINGS with a dummy activity that bounces straight back to Amazon's home screen, so
+     * open Amazon's own settings screen first. Fire OS 8 and other Android TVs do not have it and use the standard intent.
+     */
+    private void openSettings() {
+        try {
+            startActivity(new Intent().setClassName("com.amazon.tv.launcher", "com.amazon.tv.launcher.ui.MainSettingsActivity")
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+        } catch (ActivityNotFoundException | SecurityException e) {
+            open(new Intent(Settings.ACTION_SETTINGS));
         }
     }
 

@@ -8,10 +8,13 @@
     <!-- Starting dock, in this order. After that the dock is edited on the TV (hold OK or press Menu on an app)
          and saved on the device. Missing apps are skipped. -->
     <string-array name="dock_apps">
-        <item>com.amazon.firetv.youtube</item>
         <item>com.netflix.ninja</item>
+        <item>com.amazon.firetv.youtube</item>
+        <item>com.amazon.firetv.youtube.tv</item>
         <item>com.amazon.firebat</item>
-        <item>com.apple.airplay.amazon.airplay</item>
+        <item>com.hulu.plus</item>
+        <item>com.peacock.peacockfiretv</item>
+        <item>com.cbs.ott</item>
     </string-array>
 
     <!-- Apps never shown as tiles (e.g. the Live TV app, which the Inputs menu already covers). -->
@@ -27,5 +30,5 @@
     <string name="live_tv_package" translatable="false">com.amazon.tv.livetv</string>
 
     <!-- Tiles per row in the grid, and the most apps the dock can hold. -->
-    <integer name="columns">4</integer>
+    <integer name="columns">7</integer>
 </resources>

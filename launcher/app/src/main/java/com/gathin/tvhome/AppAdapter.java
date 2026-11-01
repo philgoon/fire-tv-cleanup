@@ -9,7 +9,10 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Outline;
+import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -125,7 +128,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             int square = squareName == null ? 0
                     : ctx.getResources().getIdentifier(squareName, "drawable", ctx.getPackageName());
             fresh.add(new Entry(label, new ComponentName(pkg, ri.activityInfo.name),
-                    square != 0 ? ctx.getDrawable(square) : null, icon));
+                    square != 0 ? ctx.getDrawable(square) : flushTile(icon), icon));
         }
         Collections.sort(fresh, (a, b) -> {
             int fa = pinned.indexOf(a.pkg), fb = pinned.indexOf(b.pkg);
@@ -226,6 +229,51 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             if (pos != RecyclerView.NO_POSITION) listener.onTileMenu(pos, v);
             return true;
         });
+    }
+
+    /**
+     * Square tile art for an app with no hand-drawn icon: the app's own icon on a tile filled with the icon's edge
+     * colour, so the logo sits flush with the tile instead of floating on graphite. A square icon with opaque edges
+     * fills the whole tile; a wide banner is fitted with a margin. A transparent icon gets a graphite tile.
+     */
+    private Drawable flushTile(Drawable icon) {
+        int w = icon.getIntrinsicWidth(), h = icon.getIntrinsicHeight();
+        if (w <= 0 || h <= 0) return null;
+        float down = Math.min(1f, 512f / Math.max(w, h));
+        Bitmap src = Bitmap.createBitmap(Math.max(1, (int) (w * down)), Math.max(1, (int) (h * down)), Bitmap.Config.ARGB_8888);
+        // Draw a private copy: changing the bounds of the drawable an ImageView shows would blank the tile.
+        Drawable d = icon.getConstantState() != null ? icon.getConstantState().newDrawable().mutate() : icon;
+        d.setBounds(0, 0, src.getWidth(), src.getHeight());
+        d.draw(new Canvas(src));
+
+        int r = 0, g = 0, b = 0, opaque = 0, total = 0;
+        for (int i = 0; i < src.getWidth(); i++) {
+            for (int y : new int[]{0, src.getHeight() - 1}) {
+                int p = src.getPixel(i, y); total++;
+                if (Color.alpha(p) >= 200) { r += Color.red(p); g += Color.green(p); b += Color.blue(p); opaque++; }
+            }
+        }
+        for (int j = 1; j < src.getHeight() - 1; j++) {
+            for (int x : new int[]{0, src.getWidth() - 1}) {
+                int p = src.getPixel(x, j); total++;
+                if (Color.alpha(p) >= 200) { r += Color.red(p); g += Color.green(p); b += Color.blue(p); opaque++; }
+            }
+        }
+        boolean solidEdge = opaque * 10 >= total * 6;
+        int bg = solidEdge ? Color.rgb(r / opaque, g / opaque, b / opaque) : Color.rgb(0x2B, 0x2B, 0x30);
+
+        final int s = 192;
+        boolean square = (float) src.getWidth() / src.getHeight() < 1.3f && (float) src.getHeight() / src.getWidth() < 1.3f;
+        float scale = solidEdge && square
+                ? Math.max((float) s / src.getWidth(), (float) s / src.getHeight())
+                : 0.86f * Math.min((float) s / src.getWidth(), (float) s / src.getHeight());
+        float dw = src.getWidth() * scale, dh = src.getHeight() * scale;
+        Bitmap tile = Bitmap.createBitmap(s, s, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(tile);
+        c.drawColor(bg);
+        c.drawBitmap(src, null, new RectF((s - dw) / 2f, (s - dh) / 2f, (s + dw) / 2f, (s + dh) / 2f), new Paint(Paint.FILTER_BITMAP_FLAG));
+        src.recycle();
+        return new BitmapDrawable(ctx.getResources(), tile);
     }
 
     private void launch(Entry e) {
