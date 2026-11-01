@@ -1,5 +1,7 @@
 package com.gathin.tvhome;
 
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +41,7 @@ import java.util.Set;
 
 /**
  * App tiles. The first {@link #dockCount()} positions are the pinned dock, in the order the user set; the rest
- * is alphabetical. The pinned list is saved on the device and starts from res/values/config.xml (dock_apps).
+ * is ordered by time in the foreground over the last {@link #USAGE_DAYS} days, most used first, then alphabetical.
  */
 public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
 
@@ -130,6 +132,7 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
             fresh.add(new Entry(label, new ComponentName(pkg, ri.activityInfo.name),
                     square != 0 ? ctx.getDrawable(square) : flushTile(icon), icon));
         }
+        Map<String, Long> usage = foregroundTime();
         Collections.sort(fresh, (a, b) -> {
             int fa = pinned.indexOf(a.pkg), fb = pinned.indexOf(b.pkg);
             if (fa >= 0 || fb >= 0) {
@@ -137,7 +140,8 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
                 if (fb < 0) return -1;
                 return Integer.compare(fa, fb);
             }
-            return a.label.compareToIgnoreCase(b.label);
+            int byUse = Long.compare(usage.getOrDefault(b.pkg, 0L), usage.getOrDefault(a.pkg, 0L));
+            return byUse != 0 ? byUse : a.label.compareToIgnoreCase(b.label);
         });
         items.clear();
         items.addAll(fresh);
@@ -145,6 +149,23 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.Holder> {
         while (docked < items.size() && pinned.contains(items.get(docked).pkg)) docked++;
         dockCount = Math.min(docked, maxDock);
         notifyDataSetChanged();
+    }
+
+    static final int USAGE_DAYS = 30;
+
+    /**
+     * Milliseconds each package spent in the foreground over the last {@link #USAGE_DAYS} days. Empty when usage
+     * access is not granted (adb: appops set com.gathin.tvhome GET_USAGE_STATS allow), which leaves the grid alphabetical.
+     */
+    private Map<String, Long> foregroundTime() {
+        Map<String, Long> totals = new HashMap<>();
+        UsageStatsManager usm = (UsageStatsManager) ctx.getSystemService(Context.USAGE_STATS_SERVICE);
+        if (usm == null) return totals;
+        long now = System.currentTimeMillis();
+        Map<String, UsageStats> stats = usm.queryAndAggregateUsageStats(now - USAGE_DAYS * 24L * 3600_000L, now);
+        if (stats == null) return totals;
+        for (UsageStats s : stats.values()) totals.put(s.getPackageName(), s.getTotalTimeInForeground());
+        return totals;
     }
 
     // ---- dock editing ----------------------------------------------------------------------------
