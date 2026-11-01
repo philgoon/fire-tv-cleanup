@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fire TV Launcher Mockup 1 - Default-like</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: linear-gradient(to bottom, #003366, #002244);
+    color: white;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .greeting {
+    margin-top: 20px;
+    font-size: 24px;
+  }
+  .clock {
+    margin-top: 10px;
+    font-size: 18px;
+  }
+  .dock {
+    display: flex;
+    gap: 12px;
+    margin-top: 40px;
+  }
+  .dock-item {
+    text-align: center;
+  }
+  .dock-item img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    filter: brightness(0.8);
+    transition: transform 0.2s, filter 0.2s;
+  }
+  .dock-item img:hover {
+    transform: scale(1.2);
+    filter: brightness(1);
+  }
+  .dock-item label {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="greeting">Good evening, Alex</div>
+<div class="clock">7:45 PM</div>
+<div class="dock">
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=Netflix" alt="Netflix">
+    <label>Netflix</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=YouTube" alt="YouTube">
+    <label>YouTube</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=YouTubeTV" alt="YouTube TV">
+    <label>YouTube TV</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=Firebat" alt="Prime Video">
+    <label>Prime Video</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=Hulu" alt="Hulu">
+    <label>Hulu</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=Peacock" alt="Peacock">
+    <label>Peacock</label>
+  </div>
+  <div class="dock-item">
+    <img src="https://via.placeholder.com/80x80?text=CBS" alt="CBS">
+    <label>CBS</label>
+  </div>
+</div>
+</body>
+</html>

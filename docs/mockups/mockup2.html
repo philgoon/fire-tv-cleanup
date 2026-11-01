@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Fire TV Launcher Mockup 2 - Vertical Dock</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    background: #111;
+    color: white;
+    height: 100vh;
+    display: flex;
+  }
+  .sidebar {
+    width: 90px;
+    background: #222;
+    padding-top: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sidebar-item {
+    margin: 20px 0;
+    text-align: center;
+  }
+  .sidebar-item img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    opacity: 0.7;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .sidebar-item img:hover {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+  .sidebar-item label {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+  .main {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .greeting {
+    font-size: 20px;
+  }
+  .clock {
+    font-size: 16px;
+  }
+  .apps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+  .app {
+    text-align: center;
+  }
+  .app img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+  .app img:hover {
+    opacity: 1;
+  }
+  .app label {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+<div class="sidebar">
+  <div class="sidebar-item">
+    <img src="https://via.placeholder.com/50x50?text=Netflix" alt="Netflix">
+    <label>Netflix</label>
+  </div>
+  <div class="sidebar-item">
+    <img src="https://via.placeholder.com/50x50?text=YouTube" alt="YouTube">
+    <label>YouTube</label>
+  </div>
+  <div class="sidebar-item">
+    <img src="https://via.placeholder.com/50x50?text=Prime" alt="Prime Video">
+    <label>Prime Video</label>
+  </div>
+  <div class="sidebar-item">
+    <img src="https://via.placeholder.com/50x50?text=Hulu" alt="Hulu">
+    <label>Hulu</label>
+  </div>
+  <div class="sidebar-item">
+    <img src="https://via.placeholder.com/50x50?text=Kodi" alt="Kodi">
+    <label>Kodi</label>
+  </div>
+</div>
+<div class="main">
+  <div class="header">
+    <div class="greeting">Good evening, Alex</div>
+    <div class="clock">7:45 PM</div>
+  </div>
+  <div class="apps">
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=Disney" alt="Disney+">
+      <label>Disney+</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=HBOMax" alt="HBO Max">
+      <label>HBO Max</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=Paramount" alt="Paramount+">
+      <label>Paramount+</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=Discovery" alt="Discovery+">
+      <label>Discovery+</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=Peacock" alt="Peacock">
+      <label>Peacock</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=AppleTV" alt="Apple TV+">
+      <label>Apple TV+</label>
+    </div>
+    <div class="app">
+      <img src="https://via.placeholder.com/60x60?text=ESPN" alt="ESPN">
+      <label>ESPN</label>
+    </div>
+  </div>
+</div>
+</body>
+</html>
